@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Flota de Vehículos</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <main id="app">
+        <section id="login-section" class="card">
+            <h1>Gestión de Flota</h1>
+            <p class="subtitle">Inicia sesión para administrar tu flota de vehículos.</p>
+            <form id="login-form" class="form">
+                <div class="form-group">
+                    <label for="username">Usuario</label>
+                    <input type="text" id="username" name="username" required autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn primary">Iniciar sesión</button>
+                <p class="hint">Usuario demo: <strong>admin</strong> / Contraseña: <strong>admin123</strong></p>
+                <p id="login-error" class="error hidden">Credenciales inválidas, intenta nuevamente.</p>
+            </form>
+        </section>
+
+        <div id="dashboard" class="hidden">
+            <header class="topbar">
+                <div>
+                    <h1>Panel de Gestión de Flota</h1>
+                    <p class="subtitle">Control centralizado de conductores, vehículos y operaciones diarias.</p>
+                </div>
+                <div class="topbar-actions">
+                    <span id="welcome-text"></span>
+                    <button id="logout-btn" class="btn">Cerrar sesión</button>
+                </div>
+            </header>
+
+            <nav class="navbar">
+                <button class="nav-link active" data-target="resumen">Resumen</button>
+                <button class="nav-link" data-target="conductores">Conductores</button>
+                <button class="nav-link" data-target="vehiculos">Vehículos</button>
+                <button class="nav-link" data-target="movimientos">Movimientos</button>
+                <button class="nav-link" data-target="carguios">Carguíos de Combustible</button>
+                <button class="nav-link" data-target="mantenimientos">Mantenimientos</button>
+            </nav>
+
+            <section id="resumen" class="page">
+                <h2>Resumen</h2>
+                <div class="stats-grid">
+                    <article class="stat-card">
+                        <h3>Conductores activos</h3>
+                        <p id="stat-drivers" class="stat-value">0</p>
+                    </article>
+                    <article class="stat-card">
+                        <h3>Vehículos en servicio</h3>
+                        <p id="stat-vehicles" class="stat-value">0</p>
+                    </article>
+                    <article class="stat-card">
+                        <h3>Movimientos registrados (30 días)</h3>
+                        <p id="stat-movements" class="stat-value">0</p>
+                    </article>
+                    <article class="stat-card">
+                        <h3>Próximos mantenimientos</h3>
+                        <p id="stat-maintenance" class="stat-value">0</p>
+                    </article>
+                </div>
+                <section class="card">
+                    <h3>Indicadores recientes</h3>
+                    <ul id="recent-activity" class="activity-list"></ul>
+                </section>
+            </section>
+
+            <section id="conductores" class="page hidden">
+                <div class="page-header">
+                    <h2>Conductores</h2>
+                    <button class="btn primary" data-open-modal="driver-modal">Nuevo conductor</button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Número de licencia</th>
+                            <th>Teléfono</th>
+                            <th>Email</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="drivers-table" data-entity="drivers"></tbody>
+                </table>
+            </section>
+
+            <section id="vehiculos" class="page hidden">
+                <div class="page-header">
+                    <h2>Vehículos</h2>
+                    <button class="btn primary" data-open-modal="vehicle-modal">Nuevo vehículo</button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Patente</th>
+                            <th>Marca</th>
+                            <th>Modelo</th>
+                            <th>Año</th>
+                            <th>Capacidad</th>
+                            <th>Estado</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="vehicles-table" data-entity="vehicles"></tbody>
+                </table>
+            </section>
+
+            <section id="movimientos" class="page hidden">
+                <div class="page-header">
+                    <h2>Movimientos</h2>
+                    <button class="btn primary" data-open-modal="movement-modal">Registrar movimiento</button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Vehículo</th>
+                            <th>Conductor</th>
+                            <th>Origen</th>
+                            <th>Destino</th>
+                            <th>Salida</th>
+                            <th>Llegada</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="movements-table" data-entity="movements"></tbody>
+                </table>
+            </section>
+
+            <section id="carguios" class="page hidden">
+                <div class="page-header">
+                    <h2>Carguíos de combustible</h2>
+                    <button class="btn primary" data-open-modal="fuel-modal">Registrar carguío</button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Vehículo</th>
+                            <th>Conductor</th>
+                            <th>Fecha</th>
+                            <th>Litros</th>
+                            <th>Costo</th>
+                            <th>Estación</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="fuel-table" data-entity="fuel"></tbody>
+                </table>
+            </section>
+
+            <section id="mantenimientos" class="page hidden">
+                <div class="page-header">
+                    <h2>Mantenimientos</h2>
+                    <button class="btn primary" data-open-modal="maintenance-modal">Registrar mantenimiento</button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Vehículo</th>
+                            <th>Fecha</th>
+                            <th>Tipo</th>
+                            <th>Descripción</th>
+                            <th>Costo</th>
+                            <th>Próximo</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="maintenance-table" data-entity="maintenance"></tbody>
+                </table>
+            </section>
+        </div>
+    </main>
+
+    <div id="modals">
+        <dialog id="driver-modal" class="modal">
+            <form method="dialog" class="modal-content" data-entity="drivers">
+                <header>
+                    <h3 id="driver-modal-title">Nuevo conductor</h3>
+                    <button type="button" class="icon-btn" data-close>&times;</button>
+                </header>
+                <input type="hidden" name="id">
+                <div class="form-grid">
+                    <label>Nombre
+                        <input name="name" required>
+                    </label>
+                    <label>Número de licencia
+                        <input name="licenseNumber" required>
+                    </label>
+                    <label>Teléfono
+                        <input name="phone" required>
+                    </label>
+                    <label>Email
+                        <input name="email" type="email" required>
+                    </label>
+                </div>
+                <footer class="modal-footer">
+                    <button type="button" class="btn" data-close>Cancelar</button>
+                    <button type="submit" class="btn primary">Guardar</button>
+                </footer>
+            </form>
+        </dialog>
+
+        <dialog id="vehicle-modal" class="modal">
+            <form method="dialog" class="modal-content" data-entity="vehicles">
+                <header>
+                    <h3 id="vehicle-modal-title">Nuevo vehículo</h3>
+                    <button type="button" class="icon-btn" data-close>&times;</button>
+                </header>
+                <input type="hidden" name="id">
+                <div class="form-grid">
+                    <label>Patente
+                        <input name="plate" required>
+                    </label>
+                    <label>Marca
+                        <input name="brand" required>
+                    </label>
+                    <label>Modelo
+                        <input name="model" required>
+                    </label>
+                    <label>Año
+                        <input name="year" type="number" min="1950" max="2100" required>
+                    </label>
+                    <label>Capacidad
+                        <input name="capacity" required>
+                    </label>
+                    <label>Estado
+                        <select name="status" required>
+                            <option value="en_servicio">En servicio</option>
+                            <option value="mantenimiento">En mantenimiento</option>
+                            <option value="fuera_servicio">Fuera de servicio</option>
+                        </select>
+                    </label>
+                </div>
+                <footer class="modal-footer">
+                    <button type="button" class="btn" data-close>Cancelar</button>
+                    <button type="submit" class="btn primary">Guardar</button>
+                </footer>
+            </form>
+        </dialog>
+
+        <dialog id="movement-modal" class="modal">
+            <form method="dialog" class="modal-content" data-entity="movements">
+                <header>
+                    <h3 id="movement-modal-title">Registrar movimiento</h3>
+                    <button type="button" class="icon-btn" data-close>&times;</button>
+                </header>
+                <input type="hidden" name="id">
+                <div class="form-grid">
+                    <label>Vehículo
+                        <select name="vehicleId" required></select>
+                    </label>
+                    <label>Conductor
+                        <select name="driverId" required></select>
+                    </label>
+                    <label>Origen
+                        <input name="origin" required>
+                    </label>
+                    <label>Destino
+                        <input name="destination" required>
+                    </label>
+                    <label>Fecha de salida
+                        <input name="departureDate" type="datetime-local" required>
+                    </label>
+                    <label>Fecha de llegada
+                        <input name="arrivalDate" type="datetime-local">
+                    </label>
+                    <label>Notas
+                        <textarea name="notes" rows="2"></textarea>
+                    </label>
+                </div>
+                <footer class="modal-footer">
+                    <button type="button" class="btn" data-close>Cancelar</button>
+                    <button type="submit" class="btn primary">Guardar</button>
+                </footer>
+            </form>
+        </dialog>
+
+        <dialog id="fuel-modal" class="modal">
+            <form method="dialog" class="modal-content" data-entity="fuel">
+                <header>
+                    <h3 id="fuel-modal-title">Registrar carguío</h3>
+                    <button type="button" class="icon-btn" data-close>&times;</button>
+                </header>
+                <input type="hidden" name="id">
+                <div class="form-grid">
+                    <label>Vehículo
+                        <select name="vehicleId" required></select>
+                    </label>
+                    <label>Conductor
+                        <select name="driverId"></select>
+                    </label>
+                    <label>Fecha
+                        <input name="date" type="date" required>
+                    </label>
+                    <label>Litros
+                        <input name="liters" type="number" min="0" step="0.01" required>
+                    </label>
+                    <label>Costo
+                        <input name="cost" type="number" min="0" step="0.01" required>
+                    </label>
+                    <label>Estación
+                        <input name="station">
+                    </label>
+                </div>
+                <footer class="modal-footer">
+                    <button type="button" class="btn" data-close>Cancelar</button>
+                    <button type="submit" class="btn primary">Guardar</button>
+                </footer>
+            </form>
+        </dialog>
+
+        <dialog id="maintenance-modal" class="modal">
+            <form method="dialog" class="modal-content" data-entity="maintenance">
+                <header>
+                    <h3 id="maintenance-modal-title">Registrar mantenimiento</h3>
+                    <button type="button" class="icon-btn" data-close>&times;</button>
+                </header>
+                <input type="hidden" name="id">
+                <div class="form-grid">
+                    <label>Vehículo
+                        <select name="vehicleId" required></select>
+                    </label>
+                    <label>Fecha
+                        <input name="date" type="date" required>
+                    </label>
+                    <label>Tipo
+                        <input name="type" required>
+                    </label>
+                    <label>Descripción
+                        <textarea name="description" rows="3"></textarea>
+                    </label>
+                    <label>Costo
+                        <input name="cost" type="number" min="0" step="0.01">
+                    </label>
+                    <label>Próximo mantenimiento
+                        <input name="nextDate" type="date">
+                    </label>
+                </div>
+                <footer class="modal-footer">
+                    <button type="button" class="btn" data-close>Cancelar</button>
+                    <button type="submit" class="btn primary">Guardar</button>
+                </footer>
+            </form>
+        </dialog>
+    </div>
+
+    <script src="js/app.js" type="module"></script>
+</body>
+</html>
